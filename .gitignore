@@ -27,3 +27,6 @@
 /config/master.key
 .history/
 .idea/
+
+# Ignore environment variables
+.env
