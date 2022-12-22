@@ -28,19 +28,19 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
-#  pma:
-#    container_name: "${DOCKER_NAME}_pma"
-#    image: phpmyadmin/phpmyadmin
-#    environment:
-#      # https://docs.phpmyadmin.net/en/latest/setup.html#docker-environment-variables
-#      PMA_HOST: db
-#      PMA_PORT: "${DB_PORT}"
-#      PMA_USER: "${DB_USER}"
-#      PMA_PASSWORD: "${DB_PASSWORD}"
-#    ports:
-#      - ${PMA_PORT}:80
-#    links:
-#      - db:db
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_DB_HOST: "${DB_HOST}"
+      ADMINER_DEFAULT_DB_NAME: "${DB_NAME}"
+      ADMINER_DESIGN: nette
+      ADMINER_PLUGINS: tables-filter tinymce
+    ports:
+      - "${ADMINER_PORT}:8080"
+    depends_on:
+      - db
+
 
 volumes:
   db_data:
