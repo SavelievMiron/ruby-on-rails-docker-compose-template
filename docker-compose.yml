@@ -1,20 +1,28 @@
 version: "3.9"
+
 services:
-  postgres:
+
+  db:
+    container_name: "${DOCKER_NAME}_db"
     image: postgres:alpine
     ports:
-      - 5432:5432
+      - "${DB_PORT}:5432"
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
   web:
-    build: .
+    container_name: "${DOCKER_NAME}_ruby"
+    build:
+      context: ./docker/ruby
+      dockerfile: ./ruby.dockerfile
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/app
     ports:
-      - "3000:3000"
+      - "${APP_PORT}:3000"
     depends_on:
-      - postgres
+      - db
