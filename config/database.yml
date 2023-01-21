@@ -21,32 +21,34 @@ default: &default
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
+  username: <%= ENV.fetch("DB_USER") %>
+
   # The password associated with the postgres role (username).
-  password: password
+  password: <%= ENV.fetch("DB_PASSWORD") %>
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
-  host: postgres
+  host: <%= ENV.fetch("DB_HOST") %>
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
-  port: 5432
+  port: <%= ENV.fetch("DB_PORT") %>
 
 development:
   <<: *default
   database: app_development
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
+# Warning: The db defined as "test" will be erased and
+# re-generated from your development db when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
   database: app_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
-# like your database password, in your source code. If your source code is
-# ever seen by anyone, they now have access to your database.
+# like your db password, in your source code. If your source code is
+# ever seen by anyone, they now have access to your db.
 #
 # Instead, provide the password as a unix environment variable when you boot
 # the app. Read http://guides.rubyonrails.org/configuring.html#configuring-a-database
@@ -58,7 +60,7 @@ test:
 #
 #   DATABASE_URL="postgres://myuser:mypass@localhost/somedatabase"
 #
-# You can use this database configuration with:
+# You can use this db configuration with:
 #
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>

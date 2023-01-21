@@ -2,27 +2,45 @@ version: "3.9"
 
 services:
 
+  web:
+    container_name: "${DOCKER_NAME}_web"
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/app
+    ports:
+      - "${APP_PORT}:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
   db:
     container_name: "${DOCKER_NAME}_db"
     image: postgres:alpine
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - ./docker/db:/docker-entrypoint-initdb.d/:ro
+      - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
-  web:
-    container_name: "${DOCKER_NAME}_ruby"
-    build:
-      context: ./docker/ruby
-      dockerfile: ./ruby.dockerfile
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-      - .:/app
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_DB_HOST: "${DB_HOST}"
+      ADMINER_DEFAULT_DB_NAME: "${DB_NAME}"
+      ADMINER_DESIGN: nette
+      ADMINER_PLUGINS: tables-filter tinymce
     ports:
-      - "${APP_PORT}:3000"
+      - "${ADMINER_PORT}:8080"
     depends_on:
       - db
+
+
+volumes:
+  db_data:
